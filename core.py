@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
+import pudb
 import sys
-import configparser
+import ini
 from pathlib import Path
 
 from PyQt5 import (
@@ -20,7 +21,6 @@ class MainWindow(qtw.QMainWindow):
     def __init__(self, *args, **kwargs):
 
         super(MainWindow, self).__init__(*args, **kwargs)
-        self.current_file = self.getIniNames()
 
         self.setWindowTitle("Ini Editor")
         self.initMenu()
@@ -40,12 +40,12 @@ class MainWindow(qtw.QMainWindow):
         self.fileMenu = self.menubar.addMenu('File')
 
         fileActions = {
-                "New": (qtw.QAction('New', self), self.newFile),
-                "Load": (qtw.QAction("Load", self), self.loadFile),
-                "Save": (qtw.QAction("Save", self), self.saveFile),
-                "Save As": (qtw.QAction("Save As", self), self.saveAsFile),
-                "Separator": (None, None),
-                "Quit": (qtw.QAction("Quit", self), qtw.qApp.quit),
+                "New":        (qtw.QAction('New', self),     self.newFile),
+                "Load":       (qtw.QAction("Load", self),    self.loadFile),
+                "Save":       (qtw.QAction("Save", self),    self.saveFile),
+                "Save As":    (qtw.QAction("Save As", self), self.saveAsFile),
+                "Separator":  (None, None),
+                "Quit":       (qtw.QAction("Quit", self), qtw.qApp.quit),
                 }
 
         for key, (act, fun) in fileActions.items():
@@ -61,7 +61,11 @@ class MainWindow(qtw.QMainWindow):
         pass
 
     def loadFile(self):
-        pass
+        pu.db
+        filename = Path(self.getIniNames()[0])
+        config = self.readIni(str(filename))
+        self.docks.append(IniView(config))
+        self.addDockWidget(self.docks[-1])
 
     def saveFile(self):
         pass
@@ -69,18 +73,11 @@ class MainWindow(qtw.QMainWindow):
     def saveAsFile(self):
         pass
 
-
-
-
     def getIniNames(self):
         return qtw.QFileDialog.getOpenFileName()
 
     def readIni(self, filename):
-        config = configparser.configParser(
-                comment_prefixes='$$%',
-                allow_no_value=True)
-        config.read(filename)
-        return config
+        return ini.parse(open(str(filename), 'r').read())
 
 
 if __name__ == '__main__':
